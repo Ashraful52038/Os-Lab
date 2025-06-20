@@ -1,0 +1,32 @@
+#In terminal:
+#nano backup_manager.sh ....then....
+
+read -p "Enter the directory path to back up: " dir_path
+
+if [ ! -d "$dir_path" ]; then
+    echo "Error: Directory '$dir_path' does not exist."
+    exit 1
+else
+    echo "Directory found: $dir_path"
+fi
+
+backup_dir="./backups"
+
+if [ ! -d "$backup_dir" ]; then
+    mkdir "$backup_dir"
+    echo "Created backup directory: $backup_dir"
+else
+    echo "Using existing backup directory: $backup_dir"
+fi
+
+read -p "Enter the filename to back up: " file_name
+
+full_file_path="$dir_path/$file_name"
+
+if [ ! -f "$full_file_path" ]; then
+    echo "Error: File '$file_name' not found in '$dir_path'."
+    exit 1
+else
+    mv "$full_file_path" "$backup_dir"
+    echo "File '$file_name' moved to $backup_dir and removed from original location."
+fi
