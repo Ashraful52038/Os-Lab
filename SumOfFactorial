@@ -1,0 +1,51 @@
+#include <iostream>
+#include <pthread.h>
+#include <vector>
+
+using namespace std;
+
+struct ThreadData {
+    int number;
+    int result;
+};
+
+void* computeFactorial(void* arg) {
+    ThreadData* data = (ThreadData*)arg;
+    int num = data->number;
+    data->result = 1;
+
+    for (int i = 2; i <= num; ++i) {
+        data->result *= i;
+    }
+
+    pthread_exit(0);
+}
+
+int main() {
+    int nums[3];
+
+    cout << "Case 1: ";
+    cin >> nums[0] >> nums[1] >> nums[2];
+
+    pthread_t threads[3];
+    ThreadData threadData[3];
+
+    for (int i = 0; i < 3; ++i) {
+        threadData[i].number = nums[i];
+        pthread_create(&threads[i], nullptr, computeFactorial, (void*)&threadData[i]);
+    }
+
+    for (int i = 0; i < 3; ++i) {
+        pthread_join(threads[i], nullptr);
+    }
+
+    int totalSum = 0;
+    for (int i = 0; i < 3; ++i) {
+        cout << "Factorial of " << threadData[i].number << " is: " << threadData[i].result << endl;
+        totalSum += threadData[i].result;
+    }
+
+    cout << "The sum of all factorials is: " << totalSum << endl;
+
+    return 0;
+}
